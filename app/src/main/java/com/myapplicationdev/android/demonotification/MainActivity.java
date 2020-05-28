@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnNotify1 = findViewById(R.id.btnNotify1);
+        btnNotify2 = findViewById(R.id.btnNotify2);
         btnNotify1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +56,41 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
+        });
+        btnNotify2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel("default", "default Channel", NotificationManager.IMPORTANCE_DEFAULT);
+                    channel.setDescription("This is for default notification");
+                    notificationManager.createNotificationChannel(channel);
+                }
+                Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this,requestCode,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+
+                NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+                bigText.setBigContentTitle("Big Text - Long Content");
+                bigText.bigText("This is one big text" + "- A quick brown fox jumps over a lazy brown dog " + "\nLorem ipsum dolor sit amet,sea eu quad des");
+                bigText.setSummaryText("Reflection journal");
+
+                //build notification
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"default");
+                builder.setContentTitle("Amazing offer!");
+                builder.setContentText("Subject");
+                builder.setSmallIcon(android.R.drawable.btn_star_big_off);
+                builder.setContentIntent(pIntent);
+                builder.setAutoCancel(true);
+                builder.setStyle(bigText);
+
+                Notification n  = builder.build();
+
+                //An Integer good to have, for you to programmitcally cancel it
+                notificationManager.notify(notificationID, n);
+                finish();
+            }
+
+
         });
     }
 }
